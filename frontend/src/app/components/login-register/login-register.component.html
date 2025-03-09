@@ -1,0 +1,32 @@
+<!-- <div class="login-container">
+  <h2>{{ role | titlecase }} Login</h2>
+  <form (submit)="login()">
+    <input type="text" placeholder="Username" required />
+    <input type="password" placeholder="Password" required />
+    <button type="submit">Login</button>
+  </form>
+
+  <p *ngIf="role !== 'user'">
+    Don't have an account? <a (click)="goToRegister()">Register</a>
+  </p>
+</div> -->
+
+<div class="auth-container">
+  <h2>{{ isLogin ? 'Login' : 'Register' }} as {{ role }}</h2>
+
+  <form (submit)="submitForm()">
+    <input type="email" [(ngModel)]="email" name="email" placeholder="Email" required />
+    <input type="password" [(ngModel)]="password" name="password" placeholder="Password" required />
+
+    <div *ngIf="!isLogin">
+      <input type="text" [(ngModel)]="name" name="name" placeholder="Company/Owner Name" required />
+      <input type="text" [(ngModel)]="contact" name="contact" placeholder="Contact Number" required />
+    </div>
+
+    <button type="submit">{{ isLogin ? 'Login' : 'Register' }}</button>
+  </form>
+
+  <p (click)="toggleMode()">
+    {{ isLogin ? "Don't have an account? Register" : "Already have an account? Login" }}
+  </p>
+</div>
