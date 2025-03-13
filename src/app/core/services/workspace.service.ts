@@ -26,17 +26,18 @@ export class WorkspaceService {
 
   // For our simplified approach, we return the mock data
   getWorkspace(): Observable<Workspace> {
-    return of(this.mockWorkspace);
+    // return of(this.mockWorkspace);
     
     // When ready for API:
-    // return this.http.get<Workspace>(`${this.apiUrl}/1`);
+    return this.http.get<Workspace>(`${this.apiUrl}/coworking-space/1`);
   }
   
   getWorkspaceWithSeats(): Observable<Workspace> {
     // This would include the seats, but for now we return the same data
-    return of(this.mockWorkspace);
+    // return of(this.mockWorkspace);
     
     // API call would be:
-    // return this.http.get<Workspace>(`${this.apiUrl}/1/with-seats`);
+    return this.http.get<Workspace>(`${this.apiUrl}/coworking-space/1/with-seats`);
+    
   }
 }

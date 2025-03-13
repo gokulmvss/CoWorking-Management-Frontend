@@ -9,14 +9,14 @@ import { Observable, of } from 'rxjs';
 export class CoworkingSpaceService {
   private apiUrl = 'http://localhost:8080/api/coworking-spaces';
 
-  private mockCoworkingSpace: CoworkingSpace = {
-    id: 1,
-    name: 'Downtown Hub',
-    address: '123 Main Street, City',
-    contactEmail: 'contact@downtownhub.com',
-    contactPhone: '555-1234',
-    description: 'A modern coworking space in downtown with excellent amenities'
-  };
+  // private mockCoworkingSpace: CoworkingSpace = {
+  //   id: 1,
+  //   name: 'Downtown Hub',
+  //   address: '123 Main Street, City',
+  //   contactEmail: 'contact@downtownhub.com',
+  //   contactPhone: '555-1234',
+  //   description: 'A modern coworking space in downtown with excellent amenities'
+  // };
   
   constructor(private http: HttpClient) { }
 

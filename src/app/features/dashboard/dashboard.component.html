@@ -1,132 +1,82 @@
 <p>dashboard works!</p>
-<!-- src/app/features/dashboard/dashboard.component.html -->
 <div class="container mt-4">
-    <div *ngIf="dashboardSummary$ | async as summary">
-      <!-- Header -->
-      <div class="row mb-4">
-        <div class="col-12">
-          <h1>{{ summary.coworkingSpace.name }} Dashboard</h1>
-          <p class="text-muted">{{ summary.coworkingSpace.description }}</p>
-        </div>
+  <div *ngIf="dashboardSummary$">
+    <!-- Header -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <h1>{{ dashboardSummary$.coworkingSpace.data.name }} Dashboard</h1>
+        <p class="text-muted">{{ dashboardSummary$.coworkingSpace.data.description }}</p>
       </div>
+    </div>
+    
+    <!-- Workspace Summary -->
+<div class="row mb-4">
+  <div class="col-md-4 mb-3">
+    <div class="card border-primary h-100">
+      <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Workspace Summary</h5>
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">{{ dashboardSummary$.workspace.data[0]?.name }}</h5>
+        <p class="card-text">
+          <strong>Type:</strong> {{ dashboardSummary$.workspace.data[0]?.type }}<br>
+          <strong>Location:</strong> {{ dashboardSummary$.workspace.data[0]?.location }}<br>
+          <strong>Capacity:</strong> {{ dashboardSummary$.workspace.data[0]?.capacity }} seats<br>
+          <strong>Price:</strong> ${{ dashboardSummary$.workspace.data[0]?.pricePerSeatPerHour }}/hr per seat
+        </p>
+      </div>
+    </div>
+  </div>
+
       
-      <!-- Summary Cards -->
-      <div class="row mb-4">
-        <!-- Workspace Summary -->
-        <div class="col-md-4 mb-3">
-          <div class="card border-primary h-100">
-            <div class="card-header bg-primary text-white">
-              <h5 class="mb-0">Workspace Summary</h5>
-            </div>
-            <div class="card-body">
-              <h5 class="card-title">{{ summary.workspace.name }}</h5>
-              <p class="card-text">
-                <strong>Type:</strong> {{ summary.workspace.type }}<br>
-                <strong>Location:</strong> {{ summary.workspace.location }}<br>
-                <strong>Capacity:</strong> {{ summary.workspace.capacity }} seats<br>
-                <strong>Price:</strong> ${{ summary.workspace.pricePerSeatPerHour }}/hr per seat
-              </p>
-            </div>
+      <!-- Company Summary -->
+      <div class="col-md-4 mb-3">
+        <div class="card border-success h-100">
+          <div class="card-header bg-success text-white">
+            <h5 class="mb-0">Company Information</h5>
           </div>
-        </div>
-        
-        <!-- Company Summary -->
-        <div class="col-md-4 mb-3">
-          <div class="card border-success h-100">
-            <div class="card-header bg-success text-white">
-              <h5 class="mb-0">Company Information</h5>
-            </div>
-            <div class="card-body">
-              <h5 class="card-title">{{ summary.company.name }}</h5>
-              <p class="card-text">
-                <strong>Email:</strong> {{ summary.company.email }}<br>
-                <strong>Phone:</strong> {{ summary.company.phone }}<br>
-                <strong>Address:</strong> {{ summary.company.address }}<br>
-                <strong>Allocated Seats:</strong> {{ summary.allocatedSeatsCount }}
-              </p>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Occupancy Statistics -->
-        <div class="col-md-4 mb-3">
-          <div class="card border-info h-100">
-            <div class="card-header bg-info text-white">
-              <h5 class="mb-0">Occupancy Statistics</h5>
-            </div>
-            <div class="card-body">
-              <div class="text-center mb-3">
-                <div class="display-4">{{ summary.occupancyRate }}%</div>
-                <div class="text-muted">Occupancy Rate</div>
-              </div>
-              <div class="progress mb-3" style="height: 25px;">
-                <div 
-                  class="progress-bar bg-success" 
-                  role="progressbar" 
-                  [style.width]="summary.occupancyRate + '%'" 
-                  [attr.aria-valuenow]="summary.occupancyRate" 
-                  aria-valuemin="0" 
-                  aria-valuemax="100">
-                  {{ summary.occupancyRate }}%
-                </div>
-              </div>
-              <div class="row text-center">
-                <div class="col-6">
-                  <h5>{{ summary.totalSeats }}</h5>
-                  <div class="text-muted">Total Seats</div>
-                </div>
-                <div class="col-6">
-                  <h5>{{ summary.availableSeatsCount }}</h5>
-                  <div class="text-muted">Available</div>
-                </div>
-              </div>
-            </div>
+          <div class="card-body">
+            <h5 class="card-title">{{ dashboardSummary$.company.name }}</h5>
+            <p class="card-text">
+              <strong>Email:</strong> {{ dashboardSummary$.company.email }}<br>
+              <strong>Phone:</strong> {{ dashboardSummary$.company.phone }}<br>
+              <strong>Address:</strong> {{ dashboardSummary$.company.address }}<br>
+              <strong>Allocated Seats:</strong> {{ dashboardSummary$.allocatedSeatsCount }}
+            </p>
           </div>
         </div>
       </div>
       
-      <!-- Action Buttons -->
-      <div class="row mb-4">
-        <div class="col-12">
-          <div class="d-flex justify-content-center gap-3">
-            <button class="btn btn-primary" routerLink="/seats">
-              <i class="bi bi-grid"></i> Manage Seats
-            </button>
-            <button class="btn btn-success" routerLink="/seat-allocation">
-              <i class="bi bi-diagram-3"></i> Seat Allocation
-            </button>
-            <button class="btn btn-info" routerLink="/company-overview">
-              <i class="bi bi-building"></i> Company Overview
-            </button>
+      <!-- Occupancy Statistics -->
+      <div class="col-md-4 mb-3">
+        <div class="card border-info h-100">
+          <div class="card-header bg-info text-white">
+            <h5 class="mb-0">Occupancy Statistics</h5>
           </div>
-        </div>
-      </div>
-      
-      <!-- Contact Information -->
-      <div class="row">
-        <div class="col-12">
-          <div class="card">
-            <div class="card-header">
-              <h5 class="mb-0">Contact Information</h5>
+          <div class="card-body">
+            <div class="text-center mb-3">
+              <div class="display-4">{{ dashboardSummary$.occupancyRate }}%</div>
+              <div class="text-muted">Occupancy Rate</div>
             </div>
-            <div class="card-body">
-              <div class="row">
-                <div class="col-md-6">
-                  <h6>Coworking Space</h6>
-                  <p>
-                    <strong>Email:</strong> {{ summary.coworkingSpace.contactEmail }}<br>
-                    <strong>Phone:</strong> {{ summary.coworkingSpace.contactPhone }}<br>
-                    <strong>Address:</strong> {{ summary.coworkingSpace.address }}
-                  </p>
-                </div>
-                <div class="col-md-6">
-                  <h6>Company</h6>
-                  <p>
-                    <strong>Email:</strong> {{ summary.company.email }}<br>
-                    <strong>Phone:</strong> {{ summary.company.phone }}<br>
-                    <strong>Address:</strong> {{ summary.company.address }}
-                  </p>
-                </div>
+            <div class="progress mb-3" style="height: 25px;">
+              <div 
+                class="progress-bar bg-success" 
+                role="progressbar" 
+                [style.width]="dashboardSummary$.occupancyRate + '%'" 
+                [attr.aria-valuenow]="dashboardSummary$.occupancyRate" 
+                aria-valuemin="0" 
+                aria-valuemax="100">
+                {{ dashboardSummary$.occupancyRate }}%
+              </div>
+            </div>
+            <div class="row text-center">
+              <div class="col-6">
+                <h5>{{ dashboardSummary$.totalSeats }}</h5>
+                <div class="text-muted">Total Seats</div>
+              </div>
+              <div class="col-6">
+                <h5>{{ dashboardSummary$.availableSeatsCount }}</h5>
+                <div class="text-muted">Available</div>
               </div>
             </div>
           </div>
@@ -134,10 +84,59 @@
       </div>
     </div>
     
-    <!-- Loading state -->
-    <div *ngIf="!(dashboardSummary$ | async)" class="d-flex justify-content-center">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
+    <!-- Action Buttons -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="d-flex justify-content-center gap-3">
+          <button class="btn btn-primary" routerLink="/seats">
+            <i class="bi bi-grid"></i> Manage Seats
+          </button>
+          <button class="btn btn-success" routerLink="/seat-allocation">
+            <i class="bi bi-diagram-3"></i> Seat Allocation
+          </button>
+          <button class="btn btn-info" routerLink="/company-overview">
+            <i class="bi bi-building"></i> Company Overview
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Contact Information -->
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0">Contact Information</h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h6>Coworking Space</h6>
+                <p>
+                  <strong>Email:</strong> {{ dashboardSummary$.coworkingSpace.contactEmail }}<br>
+                  <strong>Phone:</strong> {{ dashboardSummary$.coworkingSpace.contactPhone }}<br>
+                  <strong>Address:</strong> {{ dashboardSummary$.coworkingSpace.address }}
+                </p>
+              </div>
+              <div class="col-md-6">
+                <h6>Company</h6>
+                <p>
+                  <strong>Email:</strong> {{ dashboardSummary$.company.email }}<br>
+                  <strong>Phone:</strong> {{ dashboardSummary$.company.phone }}<br>
+                  <strong>Address:</strong> {{ dashboardSummary$.company.address }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
+  
+  <!-- Loading state -->
+  <div *ngIf="!dashboardSummary$" class="d-flex justify-content-center">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+</div>

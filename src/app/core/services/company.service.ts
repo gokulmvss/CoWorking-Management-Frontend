@@ -21,7 +21,7 @@ export class CompanyService {
 
   constructor(private http: HttpClient) { }
 
-  getCompany(): Observable<Company> {
+  getCompany(): Observable<any> {
     // return of(this.mockCompany);
     
     // API call would be:

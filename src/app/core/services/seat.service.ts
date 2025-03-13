@@ -25,75 +25,75 @@ export class SeatService {
 
   constructor(private http: HttpClient) { }
 
-  getAllSeats(): Observable<Seat[]> {
-    return of(this.mockSeats);
+  getAllSeats(): Observable<any> {
+    // return of(this.mockSeats);
     
     // API call would be:
-    // return this.http.get<Seat[]>(`${this.apiUrl}/workspace/1`);
+    return this.http.get<Seat[]>(`${this.apiUrl}/workspace/1`);
   }
 
-  getAvailableSeats(): Observable<Seat[]> {
-    const availableSeats = this.mockSeats.filter(seat => seat.available);
-    return of(availableSeats);
+  getAvailableSeats(): Observable<any> {
+    // const availableSeats = this.mockSeats.filter(seat => seat.available);
+    // return of(availableSeats);
     
     // API call would be:
-    // return this.http.get<Seat[]>(`${this.apiUrl}/workspace/1/available`);
+    return this.http.get<Seat[]>(`${this.apiUrl}/workspace/1/available`);
   }
 
-  getSeatsByCompanyId(companyId: number): Observable<Seat[]> {
-    const companySeats = this.mockSeats.filter(seat => seat.companyId === companyId);
-    return of(companySeats);
+  getSeatsByCompanyId(companyId: number): Observable<any> {
+    // const companySeats = this.mockSeats.filter(seat => seat.companyId === companyId);
+    // return of(companySeats);
     
     // API call would be:
-    // return this.http.get<Seat[]>(`${this.apiUrl}/company/${companyId}`);
+    return this.http.get<Seat[]>(`${this.apiUrl}/company/${companyId}`);
   }
 
   addSeat(seat: Seat): Observable<Seat> {
     // Mock implementation - adds a new seat to our mock data
-    const newSeat = { ...seat, id: this.mockSeats.length + 1 };
-    this.mockSeats.push(newSeat);
-    this.seatsSubject.next([...this.mockSeats]);
-    return of(newSeat);
+    // const newSeat = { ...seat, id: this.mockSeats.length + 1 };
+    // this.mockSeats.push(newSeat);
+    // this.seatsSubject.next([...this.mockSeats]);
+    // return of(newSeat);
     
     // API call would be:
-    // return this.http.post<Seat>(`${this.apiUrl}/workspace/1`, seat);
+    return this.http.post<Seat>(`${this.apiUrl}/workspace/1`, seat);
   }
 
   allocateSeatToCompany(seatId: number, companyId: number = 1): Observable<Seat> {
     // Find and update the seat in our mock data
-    const seatIndex = this.mockSeats.findIndex(s => s.id === seatId);
-    if (seatIndex !== -1) {
-      this.mockSeats[seatIndex] = {
-        ...this.mockSeats[seatIndex],
-        available: false,
-        companyId: companyId
-      };
-      this.seatsSubject.next([...this.mockSeats]);
-      return of(this.mockSeats[seatIndex]);
-    }
+    // const seatIndex = this.mockSeats.findIndex(s => s.id === seatId);
+    // if (seatIndex !== -1) {
+    //   this.mockSeats[seatIndex] = {
+    //     ...this.mockSeats[seatIndex],
+    //     available: false,
+    //     companyId: companyId
+    //   };
+    //   this.seatsSubject.next([...this.mockSeats]);
+    //   return of(this.mockSeats[seatIndex]);
+    // }
     
     // API call would be:
-    // return this.http.post<Seat>(`${this.apiUrl}/companies/${companyId}/allocate-seats`, { workspaceId: 1, seatIds: [seatId] });
+    return this.http.post<Seat>(`${this.apiUrl}/companies/${companyId}/allocate-seats`, { workspaceId: 1, seatIds: [seatId] });
     
-    return of({} as Seat); // Return empty seat if not found
+    // return of({} as Seat); // Return empty seat if not found
   }
 
   releaseSeatFromCompany(seatId: number, companyId: number = 1): Observable<Seat> {
     // Find and update the seat in our mock data
-    const seatIndex = this.mockSeats.findIndex(s => s.id === seatId);
-    if (seatIndex !== -1) {
-      this.mockSeats[seatIndex] = {
-        ...this.mockSeats[seatIndex],
-        available: true,
-        companyId: undefined
-      };
-      this.seatsSubject.next([...this.mockSeats]);
-      return of(this.mockSeats[seatIndex]);
-    }
+    // const seatIndex = this.mockSeats.findIndex(s => s.id === seatId);
+    // if (seatIndex !== -1) {
+    //   this.mockSeats[seatIndex] = {
+    //     ...this.mockSeats[seatIndex],
+    //     available: true,
+    //     companyId: undefined
+    //   };
+    //   this.seatsSubject.next([...this.mockSeats]);
+    //   return of(this.mockSeats[seatIndex]);
+    // }
     
     // API call would be:
-    // return this.http.post<Seat>(`${this.apiUrl}/companies/${companyId}/release-seats`, [seatId]);
+    return this.http.post<Seat>(`${this.apiUrl}/companies/${companyId}/release-seats`, [seatId]);
     
-    return of({} as Seat); // Return empty seat if not found
+    // return of({} as Seat); // Return empty seat if not found
   }
 }
