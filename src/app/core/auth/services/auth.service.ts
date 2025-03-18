@@ -57,6 +57,7 @@ export interface AddEmployeeRequest {
 
 export interface EmployeeCredentials {
   username: string;
+  email:string;
   password: string;
 }
 
@@ -70,6 +71,7 @@ export class AuthService {
   
   private authTokenKey = 'auth_token';
   private userDataKey = 'user_data';
+  private credentialsKey = 'credentials';
   
   // Check if running in browser environment
   private get isBrowser(): boolean {
@@ -101,6 +103,10 @@ export class AuthService {
   
   // Login user
   login(email: string, password: string): Observable<User> {
+    // Store credentials for future API calls
+    const credentials = { email, password };
+    this.setCredentials(credentials);
+    
     // Create auth token
     const authToken = btoa(`${email}:${password}`);
     
@@ -111,6 +117,7 @@ export class AuthService {
       })
     };
     
+    // First authenticate using credentials
     return this.http.post<ApiResponse<User>>(`${this.baseUrl}/api/auth/login`, { email, password }, httpOptions)
       .pipe(
         map(response => {
@@ -163,17 +170,10 @@ export class AuthService {
   
   // Add employee (requires company admin authentication)
   addEmployee(companyId: number, data: AddEmployeeRequest): Observable<EmployeeCredentials> {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': `Basic ${this.getAuthToken()}`
-      })
-    };
-    
     return this.http.post<ApiResponse<EmployeeCredentials>>(
       `${this.baseUrl}/api/auth/company/${companyId}/add-employee`, 
       data, 
-      httpOptions
+      { headers: this.getAuthHeaders() }
     ).pipe(
       map(response => {
         if (response.success && response.data) {
@@ -188,33 +188,71 @@ export class AuthService {
   
   // Get current user details
   getCurrentUserDetails(): Observable<User> {
+    return this.http.get<ApiResponse<User>>(
+      `${this.baseUrl}/api/auth/current-user`, 
+      { headers: this.getAuthHeaders() }
+    ).pipe(
+      map(response => {
+        if (response.success && response.data) {
+          // Update local user data
+          this.setUserData(response.data);
+          this.currentUserSubject.next(response.data);
+          return response.data;
+        } else {
+          throw new Error(response.message || 'Failed to get user details');
+        }
+      }),
+      catchError(error => {
+        // If authentication error, try re-authenticating with stored credentials
+        if (error.status === 401 || error.status === 403) {
+          const credentials = this.getCredentials();
+          if (credentials) {
+            return this.refreshAuthentication(credentials.email, credentials.password)
+              .pipe(
+                map(() => this.getCurrentUser()!)
+              );
+          }
+        }
+        return throwError(() => error);
+      })
+    );
+  }
+  
+  // Refresh authentication using stored credentials
+  private refreshAuthentication(email: string, password: string): Observable<User> {
+    // Create new auth token
+    const authToken = btoa(`${email}:${password}`);
+    
     const httpOptions = {
       headers: new HttpHeaders({
-        'Authorization': `Basic ${this.getAuthToken()}`
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${authToken}`
       })
     };
     
-    return this.http.get<ApiResponse<User>>(`${this.baseUrl}/api/auth/current-user`, httpOptions)
+    return this.http.post<ApiResponse<User>>(`${this.baseUrl}/api/auth/login`, { email, password }, httpOptions)
       .pipe(
         map(response => {
           if (response.success && response.data) {
-            // Update local user data
+            // Store auth token and user data
+            this.setAuthToken(authToken);
             this.setUserData(response.data);
             this.currentUserSubject.next(response.data);
             return response.data;
           } else {
-            throw new Error(response.message || 'Failed to get user details');
+            throw new Error(response.message || 'Authentication refresh failed');
           }
         }),
-        catchError(error => throwError(() => error))
+        catchError(error => {
+          this.clearAuthData();
+          this.router.navigate(['/auth/login']);
+          return throwError(() => error);
+        })
       );
   }
   
   // Logout user
   logout(): void {
-    // Call logout endpoint if needed
-    // this.http.get(`${this.baseUrl}/api/auth/logout`);
-    
     this.clearAuthData();
     this.router.navigate(['/']);
   }
@@ -255,6 +293,28 @@ export class AuthService {
     }
   }
   
+  // Set credentials in localStorage (for refreshing auth)
+  private setCredentials(credentials: { email: string, password: string }): void {
+    if (this.isBrowser) {
+      localStorage.setItem(this.credentialsKey, JSON.stringify(credentials));
+    }
+  }
+  
+  // Get credentials from localStorage
+  private getCredentials(): { email: string, password: string } | null {
+    if (this.isBrowser) {
+      const credentialsString = localStorage.getItem(this.credentialsKey);
+      if (credentialsString) {
+        try {
+          return JSON.parse(credentialsString);
+        } catch (e) {
+          return null;
+        }
+      }
+    }
+    return null;
+  }
+  
   // Load user from localStorage
   private loadUserFromStorage(): void {
     if (this.isBrowser) {
@@ -276,19 +336,11 @@ export class AuthService {
     if (this.isBrowser) {
       localStorage.removeItem(this.authTokenKey);
       localStorage.removeItem(this.userDataKey);
+      localStorage.removeItem(this.credentialsKey);
     }
     this.currentUserSubject.next(null);
   }
 }
-
-
-
-// import { Injectable } from '@angular/core';
-// import { HttpClient, HttpHeaders } from '@angular/common/http';
-// import { BehaviorSubject, Observable, throwError } from 'rxjs';
-// import { catchError, map, tap } from 'rxjs/operators';
-// import { Router } from '@angular/router';
-// import { environment } from '../../../../environments/environment';
 
 // export interface User {
 //   id: number;
@@ -354,6 +406,11 @@ export class AuthService {
   
 //   private authTokenKey = 'auth_token';
 //   private userDataKey = 'user_data';
+  
+//   // Check if running in browser environment
+//   private get isBrowser(): boolean {
+//     return typeof window !== 'undefined';
+//   }
   
 //   constructor(
 //     private http: HttpClient,
@@ -514,37 +571,51 @@ export class AuthService {
   
 //   // Set auth token in localStorage
 //   private setAuthToken(token: string): void {
-//     localStorage.setItem(this.authTokenKey, token);
+//     if (this.isBrowser) {
+//       localStorage.setItem(this.authTokenKey, token);
+//     }
 //   }
   
 //   // Get auth token from localStorage
 //   getAuthToken(): string | null {
-//     return localStorage.getItem(this.authTokenKey);
+//     if (this.isBrowser) {
+//       return localStorage.getItem(this.authTokenKey);
+//     }
+//     return null;
 //   }
   
 //   // Set user data in localStorage
 //   private setUserData(user: User): void {
-//     localStorage.setItem(this.userDataKey, JSON.stringify(user));
+//     if (this.isBrowser) {
+//       localStorage.setItem(this.userDataKey, JSON.stringify(user));
+//     }
 //   }
   
 //   // Load user from localStorage
 //   private loadUserFromStorage(): void {
-//     try {
-//       const userData = localStorage.getItem(this.userDataKey);
-//       if (userData) {
-//         const user = JSON.parse(userData) as User;
-//         this.currentUserSubject.next(user);
+//     if (this.isBrowser) {
+//       try {
+//         const userData = localStorage.getItem(this.userDataKey);
+//         if (userData) {
+//           const user = JSON.parse(userData) as User;
+//           this.currentUserSubject.next(user);
+//         }
+//       } catch (error) {
+//         console.error('Failed to load user data from localStorage', error);
+//         this.clearAuthData();
 //       }
-//     } catch (error) {
-//       console.error('Failed to load user data from localStorage', error);
-//       this.clearAuthData();
 //     }
 //   }
   
 //   // Clear auth data from localStorage
 //   private clearAuthData(): void {
-//     localStorage.removeItem(this.authTokenKey);
-//     localStorage.removeItem(this.userDataKey);
+//     if (this.isBrowser) {
+//       localStorage.removeItem(this.authTokenKey);
+//       localStorage.removeItem(this.userDataKey);
+//     }
 //     this.currentUserSubject.next(null);
 //   }
 // }
+
+
+

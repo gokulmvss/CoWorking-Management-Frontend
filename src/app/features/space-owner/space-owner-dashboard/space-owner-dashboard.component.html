@@ -1,195 +1,193 @@
-<p>space-owner-dashboard works!</p>
 <!-- space-owner-dashboard.component.html -->
 <div class="dashboard-container">
-    <header class="dashboard-header">
-      <div class="brand">
-        <h1>CoWorkSpace</h1>
-      </div>
-      
-      <nav class="main-nav">
-        <ul>
-          <li class="active"><a href="#"><i class="material-icons">dashboard</i> Dashboard</a></li>
-          <li><a href="#"><i class="material-icons">business</i> Coworking Spaces</a></li>
-          <li><a href="#"><i class="material-icons">widgets</i> Workspaces</a></li>
-          <li><a href="#"><i class="material-icons">group</i> Companies</a></li>
-        </ul>
-      </nav>
-      
-      <div class="user-menu" *ngIf="currentUser">
-        <div class="user-info">
-          <span class="user-name">{{ currentUser?.firstName }} {{ currentUser?.lastName }}</span>
-          <span class="user-role">Space Owner</span>
-        </div>
-        <button class="logout-btn" (click)="logout()">
-          <i class="material-icons">logout</i> Logout
-        </button>
-      </div>
-    </header>
+  <header class="dashboard-header">
+    <div class="brand">
+      <h1>CoWorkSpace</h1>
+    </div>
     
-    <div class="dashboard-content">
-      <div class="page-header">
-        <h2>Space Owner Dashboard</h2>
-        <p>Manage your coworking spaces and oversee operations</p>
+    <nav class="main-nav">
+      <ul>
+        <li class="active"><a href="#"><i class="material-icons">dashboard</i> Dashboard</a></li>
+        <li><a href="#"><i class="material-icons">business</i> Coworking Spaces</a></li>
+        <li><a href="#"><i class="material-icons">widgets</i> Workspaces</a></li>
+        <li><a href="#"><i class="material-icons">group</i> Companies</a></li>
+      </ul>
+    </nav>
+    
+    <div class="user-menu" *ngIf="currentUser">
+      <div class="user-info">
+        <span class="user-name">{{ currentUser.firstName }} {{ currentUser.lastName }}</span>
+        <span class="user-role">Space Owner</span>
       </div>
-      
-      <div class="loading-indicator" *ngIf="isLoading">
-        <div class="spinner"></div>
-        <p>Loading dashboard data...</p>
-      </div>
-      
-      <div class="error-message" *ngIf="error">
-        <i class="material-icons">error_outline</i>
-        <p>{{ error }}</p>
-        <button (click)="loadCurrentUser()">Try Again</button>
-      </div>
-      
-      <div class="dashboard-content-inner" *ngIf="!isLoading && !error">
-        <div class="stats-row">
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="material-icons">business</i>
-            </div>
-            <div class="stat-data">
-              <h3>Coworking Spaces</h3>
-              <div class="stat-value">3</div>
-              <div class="stat-trend positive">
-                <i class="material-icons">trending_up</i> 1 new this month
-              </div>
-            </div>
+      <button class="logout-btn" (click)="logout()">
+        <i class="material-icons">logout</i> Logout
+      </button>
+    </div>
+  </header>
+  
+  <div class="dashboard-content">
+    <div class="page-header">
+      <h2>Space Owner Dashboard</h2>
+      <p>Manage your coworking spaces and oversee operations</p>
+    </div>
+    
+    <div class="loading-indicator" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <p>Loading dashboard data...</p>
+    </div>
+    
+    <div class="error-message" *ngIf="error">
+      <i class="material-icons">error_outline</i>
+      <p>{{ error }}</p>
+      <button (click)="loadCurrentUser()">Try Again</button>
+    </div>
+    
+    <div class="dashboard-content-inner" *ngIf="!isLoading && !error">
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="material-icons">business</i>
           </div>
-          
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="material-icons">meeting_room</i>
-            </div>
-            <div class="stat-data">
-              <h3>Workspaces</h3>
-              <div class="stat-value">12</div>
-              <div class="stat-trend positive">
-                <i class="material-icons">trending_up</i> 2 new this month
-              </div>
-            </div>
-          </div>
-          
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="material-icons">event_seat</i>
-            </div>
-            <div class="stat-data">
-              <h3>Total Seats</h3>
-              <div class="stat-value">150</div>
-              <div class="stat-trend neutral">
-                <i class="material-icons">trending_flat</i> No change
-              </div>
-            </div>
-          </div>
-          
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="material-icons">group</i>
-            </div>
-            <div class="stat-data">
-              <h3>Companies</h3>
-              <div class="stat-value">8</div>
-              <div class="stat-trend positive">
-                <i class="material-icons">trending_up</i> 3 new this month
-              </div>
+          <div class="stat-data">
+            <h3>Coworking Spaces</h3>
+            <div class="stat-value">3</div>
+            <div class="stat-trend positive">
+              <i class="material-icons">trending_up</i> 1 new this month
             </div>
           </div>
         </div>
         
-        <div class="dashboard-sections">
-          <div class="dashboard-section">
-            <div class="section-header">
-              <h3>Pending Company Approvals</h3>
-              <button class="view-all-btn">View All</button>
-            </div>
-            <div class="table-container">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Company</th>
-                    <th>Requested On</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>TechStart Solutions</td>
-                    <td>Mar 15, 2025</td>
-                    <td><span class="status pending">Pending</span></td>
-                    <td>
-                      <div class="action-buttons">
-                        <button class="action-btn approve">Approve</button>
-                        <button class="action-btn reject">Reject</button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Creative Design Co.</td>
-                    <td>Mar 14, 2025</td>
-                    <td><span class="status pending">Pending</span></td>
-                    <td>
-                      <div class="action-buttons">
-                        <button class="action-btn approve">Approve</button>
-                        <button class="action-btn reject">Reject</button>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="material-icons">meeting_room</i>
+          </div>
+          <div class="stat-data">
+            <h3>Workspaces</h3>
+            <div class="stat-value">12</div>
+            <div class="stat-trend positive">
+              <i class="material-icons">trending_up</i> 2 new this month
             </div>
           </div>
-          
-          <div class="dashboard-section">
-            <div class="section-header">
-              <h3>Recent Activities</h3>
-              <button class="view-all-btn">View All</button>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="material-icons">event_seat</i>
+          </div>
+          <div class="stat-data">
+            <h3>Total Seats</h3>
+            <div class="stat-value">150</div>
+            <div class="stat-trend neutral">
+              <i class="material-icons">trending_flat</i> No change
             </div>
-            <div class="activities-list">
-              <div class="activity-item">
-                <div class="activity-icon">
-                  <i class="material-icons">add_business</i>
-                </div>
-                <div class="activity-content">
-                  <div class="activity-title">New coworking space added</div>
-                  <div class="activity-subtitle">Downtown Tech Hub</div>
-                  <div class="activity-time">Today, 10:30 AM</div>
-                </div>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="material-icons">group</i>
+          </div>
+          <div class="stat-data">
+            <h3>Companies</h3>
+            <div class="stat-value">8</div>
+            <div class="stat-trend positive">
+              <i class="material-icons">trending_up</i> 3 new this month
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="dashboard-sections">
+        <div class="dashboard-section">
+          <div class="section-header">
+            <h3>Pending Company Approvals</h3>
+            <button class="view-all-btn">View All</button>
+          </div>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Company</th>
+                  <th>Requested On</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>TechStart Solutions</td>
+                  <td>Mar 15, 2025</td>
+                  <td><span class="status pending">Pending</span></td>
+                  <td>
+                    <div class="action-buttons">
+                      <button class="action-btn approve">Approve</button>
+                      <button class="action-btn reject">Reject</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Creative Design Co.</td>
+                  <td>Mar 14, 2025</td>
+                  <td><span class="status pending">Pending</span></td>
+                  <td>
+                    <div class="action-buttons">
+                      <button class="action-btn approve">Approve</button>
+                      <button class="action-btn reject">Reject</button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <div class="dashboard-section">
+          <div class="section-header">
+            <h3>Recent Activities</h3>
+            <button class="view-all-btn">View All</button>
+          </div>
+          <div class="activities-list">
+            <div class="activity-item">
+              <div class="activity-icon">
+                <i class="material-icons">add_business</i>
               </div>
-              
-              <div class="activity-item">
-                <div class="activity-icon">
-                  <i class="material-icons">group_add</i>
-                </div>
-                <div class="activity-content">
-                  <div class="activity-title">Company approved</div>
-                  <div class="activity-subtitle">Innovate Solutions Inc.</div>
-                  <div class="activity-time">Yesterday, 2:15 PM</div>
-                </div>
+              <div class="activity-content">
+                <div class="activity-title">New coworking space added</div>
+                <div class="activity-subtitle">Downtown Tech Hub</div>
+                <div class="activity-time">Today, 10:30 AM</div>
               </div>
-              
-              <div class="activity-item">
-                <div class="activity-icon">
-                  <i class="material-icons">event_seat</i>
-                </div>
-                <div class="activity-content">
-                  <div class="activity-title">Seats allocated</div>
-                  <div class="activity-subtitle">10 seats to Digital Nomads LLC</div>
-                  <div class="activity-time">Yesterday, 11:45 AM</div>
-                </div>
+            </div>
+            
+            <div class="activity-item">
+              <div class="activity-icon">
+                <i class="material-icons">group_add</i>
               </div>
-              
-              <div class="activity-item">
-                <div class="activity-icon">
-                  <i class="material-icons">meeting_room</i>
-                </div>
-                <div class="activity-content">
-                  <div class="activity-title">New workspace created</div>
-                  <div class="activity-subtitle">Executive Suite B</div>
-                  <div class="activity-time">Mar 15, 2025</div>
-                </div>
+              <div class="activity-content">
+                <div class="activity-title">Company approved</div>
+                <div class="activity-subtitle">Innovate Solutions Inc.</div>
+                <div class="activity-time">Yesterday, 2:15 PM</div>
+              </div>
+            </div>
+            
+            <div class="activity-item">
+              <div class="activity-icon">
+                <i class="material-icons">event_seat</i>
+              </div>
+              <div class="activity-content">
+                <div class="activity-title">Seats allocated</div>
+                <div class="activity-subtitle">10 seats to Digital Nomads LLC</div>
+                <div class="activity-time">Yesterday, 11:45 AM</div>
+              </div>
+            </div>
+            
+            <div class="activity-item">
+              <div class="activity-icon">
+                <i class="material-icons">meeting_room</i>
+              </div>
+              <div class="activity-content">
+                <div class="activity-title">New workspace created</div>
+                <div class="activity-subtitle">Executive Suite B</div>
+                <div class="activity-time">Mar 15, 2025</div>
               </div>
             </div>
           </div>
@@ -197,3 +195,4 @@
       </div>
     </div>
   </div>
+</div>

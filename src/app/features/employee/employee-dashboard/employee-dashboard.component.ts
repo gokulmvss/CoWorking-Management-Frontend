@@ -10,8 +10,12 @@ import { CommonModule, NgIf } from '@angular/common';
   templateUrl: './employee-dashboard.component.html',
   styleUrl: './employee-dashboard.component.css'
 })
-export class EmployeeDashboardComponent extends DashboardBaseComponent{
+export class EmployeeDashboardComponent extends DashboardBaseComponent {
   companyId: number | null = null;
+  employeeId: number | null = null;
+  
+  // Mock data for demonstration
+  todayDate: Date = new Date();
   
   constructor(
     protected override authService: AuthService,
@@ -21,8 +25,8 @@ export class EmployeeDashboardComponent extends DashboardBaseComponent{
   }
   
   override onUserLoaded(user: User): void {
-    // Check if user has the COMPANY_ADMIN role
-    if (!user.roles.includes('COMPANY_ADMIN')) {
+    // Check if user has the EMPLOYEE role
+    if (!user.roles.includes('EMPLOYEE')) {
       this.authService.logout();
       this.router.navigate(['/auth/login']);
       return;
@@ -31,14 +35,23 @@ export class EmployeeDashboardComponent extends DashboardBaseComponent{
     // Set companyId from user data
     this.companyId = user.companyId || null;
     
-    // If no companyId is available, something's wrong
-    if (!this.companyId) {
-      console.error('Company admin user has no associated company ID');
-    }
+    // In a real application, you might load employee details here
+    // For now, we're just using a mock employeeId
+    this.employeeId = 1; // Normally would be fetched from API
   }
   
-  addEmployee(): void {
-    // In a real implementation, navigate to employee form or open modal
-    console.log('Add employee clicked');
+  bookSeat(): void {
+    // In a real implementation, navigate to booking form or open modal
+    console.log('Book seat clicked');
+  }
+  
+  // Format date for display
+  formatDate(date: Date): string {
+    return date.toLocaleDateString('en-US', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
   }
 }

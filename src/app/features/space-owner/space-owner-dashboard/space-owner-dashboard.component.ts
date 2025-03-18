@@ -10,7 +10,8 @@ import { CommonModule, NgIf } from '@angular/common';
   templateUrl: './space-owner-dashboard.component.html',
   styleUrl: './space-owner-dashboard.component.css'
 })
-export class SpaceOwnerDashboardComponent extends DashboardBaseComponent{
+export class SpaceOwnerDashboardComponent extends DashboardBaseComponent {
+  
   constructor(
     protected override authService: AuthService,
     protected override router: Router
@@ -25,5 +26,4 @@ export class SpaceOwnerDashboardComponent extends DashboardBaseComponent{
       this.router.navigate(['/auth/login']);
     }
   }
-
 }

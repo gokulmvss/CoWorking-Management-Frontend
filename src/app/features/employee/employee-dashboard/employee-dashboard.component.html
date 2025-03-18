@@ -1,219 +1,214 @@
 <p>employee-dashboard works!</p>
-<!-- company-dashboard.component.html -->
+<!-- employee-dashboard.component.html -->
 <div class="dashboard-container">
-    <header class="dashboard-header">
-      <div class="brand">
-        <h1>CoWorkSpace</h1>
-      </div>
-      
-      <nav class="main-nav">
-        <ul>
-          <li class="active"><a href="#"><i class="material-icons">dashboard</i> Dashboard</a></li>
-          <li><a href="#"><i class="material-icons">people</i> Employees</a></li>
-          <li><a href="#"><i class="material-icons">event_seat</i> Seats</a></li>
-          <li><a href="#"><i class="material-icons">event</i> Bookings</a></li>
-          <li><a href="#"><i class="material-icons">assessment</i> Reports</a></li>
-        </ul>
-      </nav>
-      
-      <div class="user-menu" *ngIf="currentUser">
-        <div class="user-info">
-          <span class="user-name">{{ currentUser?.firstName }} {{ currentUser?.lastName }}</span>
-          <span class="user-role">Company Admin</span>
-        </div>
-        <button class="logout-btn" (click)="logout()">
-          <i class="material-icons">logout</i> Logout
-        </button>
-      </div>
-    </header>
+  <header class="dashboard-header">
+    <div class="brand">
+      <h1>CoWorkSpace</h1>
+    </div>
     
-    <div class="dashboard-content">
-      <div class="page-header">
-        <h2>Company Dashboard</h2>
-        <p>Manage your company's workspaces and employees</p>
+    <nav class="main-nav">
+      <ul>
+        <li class="active"><a href="#"><i class="material-icons">dashboard</i> Dashboard</a></li>
+        <li><a href="#"><i class="material-icons">event_seat</i> Book a Seat</a></li>
+        <li><a href="#"><i class="material-icons">calendar_today</i> My Bookings</a></li>
+        <li><a href="#"><i class="material-icons">history</i> Booking History</a></li>
+      </ul>
+    </nav>
+    
+    <div class="user-menu" *ngIf="currentUser">
+      <div class="user-info">
+        <span class="user-name">{{ currentUser.firstName }} {{ currentUser.lastName }}</span>
+        <span class="user-role">Employee</span>
+      </div>
+      <button class="logout-btn" (click)="logout()">
+        <i class="material-icons">logout</i> Logout
+      </button>
+    </div>
+  </header>
+  
+  <div class="dashboard-content">
+    <div class="loading-indicator" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <p>Loading dashboard data...</p>
+    </div>
+    
+    <div class="error-message" *ngIf="error">
+      <i class="material-icons">error_outline</i>
+      <p>{{ error }}</p>
+      <button (click)="loadCurrentUser()">Try Again</button>
+    </div>
+    
+    <div class="dashboard-content-inner" *ngIf="!isLoading && !error">
+      <div class="welcome-banner">
+        <div class="welcome-content">
+          <div class="greeting">
+            <h2>Welcome back, {{ currentUser?.firstName }}!</h2>
+            <p>{{ formatDate(todayDate) }}</p>
+          </div>
+          <div class="quick-actions">
+            <button class="book-btn" (click)="bookSeat()">
+              <i class="material-icons">event_seat</i> Book a Seat
+            </button>
+          </div>
+        </div>
       </div>
       
-      <div class="loading-indicator" *ngIf="isLoading">
-        <div class="spinner"></div>
-        <p>Loading dashboard data...</p>
-      </div>
-      
-      <div class="error-message" *ngIf="error">
-        <i class="material-icons">error_outline</i>
-        <p>{{ error }}</p>
-        <button (click)="loadCurrentUser()">Try Again</button>
-      </div>
-      
-      <div class="dashboard-content-inner" *ngIf="!isLoading && !error">
-        <div class="stats-row">
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="material-icons">people</i>
-            </div>
-            <div class="stat-data">
-              <h3>Employees</h3>
-              <div class="stat-value">24</div>
-              <div class="stat-trend positive">
-                <i class="material-icons">trending_up</i> 3 new this month
-              </div>
-            </div>
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="material-icons">event</i>
           </div>
-          
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="material-icons">event_seat</i>
+          <div class="stat-data">
+            <h3>Today's Booking</h3>
+            <div class="booking-status">
+              <span class="status checked-in">Checked In</span>
+              <span class="seat-info">Seat A-101</span>
             </div>
-            <div class="stat-data">
-              <h3>Allocated Seats</h3>
-              <div class="stat-value">18</div>
-              <div class="stat-trend positive">
-                <i class="material-icons">trending_up</i> 5 new this month
-              </div>
-            </div>
-          </div>
-          
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="material-icons">event</i>
-            </div>
-            <div class="stat-data">
-              <h3>Active Bookings</h3>
-              <div class="stat-value">12</div>
-              <div class="stat-trend positive">
-                <i class="material-icons">trending_up</i> 20% increase
-              </div>
-            </div>
-          </div>
-          
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="material-icons">meeting_room</i>
-            </div>
-            <div class="stat-data">
-              <h3>Available Workspaces</h3>
-              <div class="stat-value">5</div>
-              <div class="stat-trend neutral">
-                <i class="material-icons">trending_flat</i> No change
-              </div>
-            </div>
+            <div class="booking-time">9:00 AM - 5:00 PM</div>
           </div>
         </div>
         
-        <div class="dashboard-sections">
-          <div class="dashboard-section">
-            <div class="section-header">
-              <h3>Recent Employees</h3>
-              <div class="section-actions">
-                <button class="add-btn" (click)="addEmployee()">
-                  <i class="material-icons">person_add</i> Add Employee
-                </button>
-                <button class="view-all-btn">View All</button>
-              </div>
-            </div>
-            <div class="table-container">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Department</th>
-                    <th>Joined</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Alice Johnson</td>
-                    <!-- <td>alice.johnson&#64example.com</td> -->
-                    <td>Engineering</td>
-                    <td>Mar 15, 2025</td>
-                    <td>
-                      <div class="action-buttons">
-                        <button class="action-btn edit">
-                          <i class="material-icons">edit</i>
-                        </button>
-                        <button class="action-btn view">
-                          <i class="material-icons">visibility</i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Robert Smith</td>
-                    <!-- <td>robert.smith&#64example.com</td> -->
-                    <td>Marketing</td>
-                    <td>Mar 10, 2025</td>
-                    <td>
-                      <div class="action-buttons">
-                        <button class="action-btn edit">
-                          <i class="material-icons">edit</i>
-                        </button>
-                        <button class="action-btn view">
-                          <i class="material-icons">visibility</i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Emily Davis</td>
-                    <!-- <td>emily.davis&#64example.com</td> -->
-                    <td>Finance</td>
-                    <td>Mar 5, 2025</td>
-                    <td>
-                      <div class="action-buttons">
-                        <button class="action-btn edit">
-                          <i class="material-icons">edit</i>
-                        </button>
-                        <button class="action-btn view">
-                          <i class="material-icons">visibility</i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="material-icons">calendar_today</i>
           </div>
-          
-          <div class="dashboard-section">
-            <div class="section-header">
-              <h3>Today's Bookings</h3>
-              <button class="view-all-btn">View All</button>
-            </div>
-            <div class="table-container">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Employee</th>
-                    <th>Seat</th>
-                    <th>Time</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>James Wilson</td>
-                    <td>A-101</td>
-                    <td>9:00 AM - 5:00 PM</td>
-                    <td><span class="status checked-in">Checked In</span></td>
-                  </tr>
-                  <tr>
-                    <td>Sarah Miller</td>
-                    <td>B-205</td>
-                    <td>10:00 AM - 6:00 PM</td>
-                    <td><span class="status confirmed">Confirmed</span></td>
-                  </tr>
-                  <tr>
-                    <td>Daniel Brown</td>
-                    <td>A-110</td>
-                    <td>8:30 AM - 4:30 PM</td>
-                    <td><span class="status checked-in">Checked In</span></td>
-                  </tr>
-                </tbody>
-              </table>
+          <div class="stat-data">
+            <h3>This Month</h3>
+            <div class="stat-value">12</div>
+            <div class="stat-label">Bookings</div>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="material-icons">access_time</i>
+          </div>
+          <div class="stat-data">
+            <h3>Total Hours</h3>
+            <div class="stat-value">96</div>
+            <div class="stat-label">This month</div>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="material-icons">meeting_room</i>
+          </div>
+          <div class="stat-data">
+            <h3>Available Seats</h3>
+            <div class="stat-value">15</div>
+            <div class="stat-label">For booking now</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="dashboard-sections">
+        <div class="dashboard-section">
+          <div class="section-header">
+            <h3>Upcoming Bookings</h3>
+            <button class="view-all-btn">View All</button>
+          </div>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Seat</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Tomorrow</td>
+                  <td>9:00 AM - 5:00 PM</td>
+                  <td>A-102</td>
+                  <td><span class="status confirmed">Confirmed</span></td>
+                  <td>
+                    <div class="action-buttons">
+                      <button class="action-btn cancel">
+                        <i class="material-icons">close</i>
+                      </button>
+                      <button class="action-btn edit">
+                        <i class="material-icons">edit</i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Mar 20, 2025</td>
+                  <td>10:00 AM - 6:00 PM</td>
+                  <td>B-205</td>
+                  <td><span class="status confirmed">Confirmed</span></td>
+                  <td>
+                    <div class="action-buttons">
+                      <button class="action-btn cancel">
+                        <i class="material-icons">close</i>
+                      </button>
+                      <button class="action-btn edit">
+                        <i class="material-icons">edit</i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Mar 21, 2025</td>
+                  <td>9:00 AM - 5:00 PM</td>
+                  <td>A-101</td>
+                  <td><span class="status confirmed">Confirmed</span></td>
+                  <td>
+                    <div class="action-buttons">
+                      <button class="action-btn cancel">
+                        <i class="material-icons">close</i>
+                      </button>
+                      <button class="action-btn edit">
+                        <i class="material-icons">edit</i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <div class="dashboard-section">
+          <div class="section-header">
+            <h3>Check-In/Check-Out</h3>
+          </div>
+          <div class="check-in-container">
+            <div class="current-booking">
+              <div class="booking-info">
+                <h4>Today's Booking</h4>
+                <div class="booking-details">
+                  <div class="detail-row">
+                    <span class="detail-label">Seat:</span>
+                    <span class="detail-value">A-101</span>
+                  </div>
+                  <div class="detail-row">
+                    <span class="detail-label">Time:</span>
+                    <span class="detail-value">9:00 AM - 5:00 PM</span>
+                  </div>
+                  <div class="detail-row">
+                    <span class="detail-label">Status:</span>
+                    <span class="status checked-in">Checked In</span>
+                  </div>
+                </div>
+              </div>
+              <div class="action-container">
+                <div class="current-time">Current Time: {{ todayDate | date:'h:mm a' }}</div>
+                <button class="check-btn check-in-btn disabled">
+                  <i class="material-icons">login</i> Check In
+                </button>
+                <button class="check-btn check-out-btn">
+                  <i class="material-icons">logout</i> Check Out
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>
