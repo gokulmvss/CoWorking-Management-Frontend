@@ -11,7 +11,8 @@ import { CommonModule, NgIf } from '@angular/common';
   styleUrl: './space-owner-dashboard.component.css'
 })
 export class SpaceOwnerDashboardComponent extends DashboardBaseComponent {
-  
+  coworkingspaceId: number | null = null;
+
   constructor(
     protected override authService: AuthService,
     protected override router: Router
@@ -24,6 +25,12 @@ export class SpaceOwnerDashboardComponent extends DashboardBaseComponent {
     if (!user.roles.includes('SPACE_OWNER')) {
       this.authService.logout();
       this.router.navigate(['/auth/login']);
+    }
+    this.coworkingspaceId=user.coworkingSpaceId || null;
+    console.log(this.coworkingspaceId);
+
+    if (!this.coworkingspaceId) {
+      console.error('Company admin user has no associated company ID');
     }
   }
 }

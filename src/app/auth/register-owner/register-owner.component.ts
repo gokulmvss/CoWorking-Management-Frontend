@@ -29,7 +29,13 @@ export class RegisterSpaceOwnerComponent {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required],
-      termsAccepted: [false, Validators.requiredTrue]
+      // Space info
+      spaceName: ['', [Validators.required, Validators.maxLength(100)]],
+      spaceAddress: ['', [Validators.required, Validators.maxLength(255)]],
+      spaceContactEmail: ['', [Validators.email, Validators.maxLength(50)]],
+      spaceContactPhone: ['', Validators.maxLength(20)],
+      spaceDescription: ['', Validators.maxLength(500)],
+      termsAccepted: [false, Validators.requiredTrue],
     }, { validators: this.passwordMatchValidator });
   }
   
@@ -56,10 +62,19 @@ export class RegisterSpaceOwnerComponent {
     const formData = this.registerForm.value;
     
     const registerData: RegisterSpaceOwnerRequest = {
+      // firstName: formData.firstName,
+      // lastName: formData.lastName,
+      // email: formData.email,
+      // password: formData.password
       firstName: formData.firstName,
       lastName: formData.lastName,
       email: formData.email,
-      password: formData.password
+      password: formData.password,
+      spaceName: formData.spaceName,
+      spaceAddress: formData.spaceAddress,
+      spaceContactEmail: formData.spaceContactEmail,
+      spaceContactPhone: formData.spaceContactPhone,
+      spaceDescription: formData.spaceDescription
     };
     
     this.authService.registerSpaceOwner(registerData)

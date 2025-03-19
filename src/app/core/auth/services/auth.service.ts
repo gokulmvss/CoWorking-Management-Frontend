@@ -14,6 +14,7 @@ export interface User {
   roles: string[];
   active: boolean;
   companyId?: number;
+  coworkingSpaceId?: number;
 }
 
 export interface ApiResponse<T> {
@@ -27,11 +28,23 @@ export interface LoginRequest {
   password: string;
 }
 
+// export interface RegisterSpaceOwnerRequest {
+//   firstName: string;
+//   lastName: string;
+//   email: string;
+//   password: string;
+// }
+
 export interface RegisterSpaceOwnerRequest {
   firstName: string;
   lastName: string;
   email: string;
   password: string;
+  spaceName: string;
+  spaceAddress: string;
+  spaceContactEmail: string;
+  spaceContactPhone: string;
+  spaceDescription: string;
 }
 
 export interface RegisterCompanyRequest {
@@ -140,7 +153,7 @@ export class AuthService {
   
   // Register space owner
   registerSpaceOwner(data: RegisterSpaceOwnerRequest): Observable<User> {
-    return this.http.post<ApiResponse<User>>(`${this.baseUrl}/api/auth/register/space-owner`, data)
+    return this.http.post<ApiResponse<any>>(`${this.baseUrl}/api/auth/register/space-owner`, data)
       .pipe(
         map(response => {
           if (response.success && response.data) {
